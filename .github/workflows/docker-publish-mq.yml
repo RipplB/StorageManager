@@ -8,7 +8,8 @@ name: Docker-MQ
 on:
   push:
     branches: [ "master" ]
-    paths: [ "backend/mq" ]
+    paths: [ "backend/mq/**" ]
+  workflow_dispatch:
 
 env:
   # Use docker.io for Docker Hub if empty
