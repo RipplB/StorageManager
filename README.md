@@ -1,11 +1,11 @@
 **Házi feladat**
 
-Csapatnév:
+Csapatnév: manuel
 
 Csapattagok Neptun kóddal:
-- Minta Mókus (ABC123)
-- Minta Mókus (ABC123)
-- Minta Mókus (ABC123)
+- Pap Arion (YJWQMP)
+- Rippl Balázs Róbert (FLHM6J)
+- Zambelly Márton (AUTXF6)
 
 Bemutató videó URL: 
 (Ugye minden olyan dolog szerepel benne a kiírásnak megfelelően, amire pontot szeretnétek kapni?)
@@ -48,4 +48,4 @@ A hivatalos teljes lista a HF feladatkiírásban található: https://www.aut.bm
 A házi feladat videót oktatási célokra újrahasznosíthatjuk? (Későbbi évfolyamoknak bemutatás, vágott anyagban felhasználás.)
 - [ ] Igen, a szerzők megjelölésével
 - [ ] Igen, névtelenül
-- [ ] Nem
+- [X] Nem
