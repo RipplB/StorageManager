@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
 	implementation(project(":mqclient"))
+	implementation(project(":entityservice"))
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
