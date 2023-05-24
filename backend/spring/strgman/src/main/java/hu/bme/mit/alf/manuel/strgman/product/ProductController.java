@@ -3,26 +3,26 @@ package hu.bme.mit.alf.manuel.strgman.product;
 import hu.bme.mit.alf.manuel.entityservice.EntityService;
 import hu.bme.mit.alf.manuel.entityservice.product.Product;
 import hu.bme.mit.alf.manuel.strgman.ValidatorBaseController;
-import lombok.AllArgsConstructor;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/${endpoints.product}")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class ProductController extends ValidatorBaseController {
-
-	private final EntityService entityService;
 
 	@Value("${endpoints.product}")
 	private String endpoint;
+
+	private final EntityService entityService;
 
 	@GetMapping
 	public List<Product> getAllProducts() {
