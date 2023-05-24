@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EntityService {
@@ -19,4 +20,13 @@ public class EntityService {
 	public List<Product> getAllProducts() {
 		return productRepository.findAll();
 	}
+
+	public Optional<Product> getProduct(Integer id) {
+		return productRepository.findById(id);
+	}
+
+	public Integer saveProduct(Product product) {
+		return productRepository.save(product).getId();
+	}
+
 }
