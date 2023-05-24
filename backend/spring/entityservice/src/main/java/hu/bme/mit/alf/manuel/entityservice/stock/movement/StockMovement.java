@@ -1,6 +1,7 @@
 package hu.bme.mit.alf.manuel.entityservice.stock.movement;
 
 import hu.bme.mit.alf.manuel.entityservice.stock.Stock;
+import hu.bme.mit.alf.manuel.entityservice.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,7 +25,8 @@ public class StockMovement {
 
 	private int amount;
 
-	private String employee;
+	@ManyToOne
+	private User employee;
 
 	@ManyToOne
 	private Stock stock;
