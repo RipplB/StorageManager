@@ -71,7 +71,7 @@ public class SendGridEmailService {
         Context ct = new Context();
 
         for (Integer id : productIds) {
-            List<Stock> stocksById = stockRepository.findByProductId(id);
+            List<Stock> stocksById = stockRepository.findByid(id);
             for (Stock stock : stocksById) {
                 stocks.add(stock);
             }
@@ -91,7 +91,8 @@ public class SendGridEmailService {
         Context ct = new Context();
 
         for (Integer id : productIds) {
-            List<Stock> stocksById = stockRepository.findByProductId(id);
+            System.out.println(id);
+            List<Stock> stocksById = stockRepository.findByid(id);
             for (Stock stock : stocksById) {
                 stocks.add(stock);
                 System.out.println(stock.getProduct().getName());
@@ -105,6 +106,28 @@ public class SendGridEmailService {
         this.sendEmail(to,subject,emailContent);
 
     }
+    public void sendStockReportByLocation(String to, String subject, String location){
+        List<Integer> productIds = stockRepository.findAllProductIdsByLocation(location);
+        List<Stock> stocks = new ArrayList<>();
 
+        Context ct = new Context();
+
+        for (Integer id : productIds) {
+            System.out.println("Ez az id-je:"+id);
+            List<Stock> stocksById = stockRepository.findByid(id);
+            for (Stock stock : stocksById) {
+                System.out.println("ide belep");
+                stocks.add(stock);
+                System.out.println(stock.getProduct().getName());
+            }
+        }
+        ct.setVariable("stocks",stocks);
+
+        // Generálja az e-mail tartalmát a Thymeleaf sablonból
+        String emailContent = "This is your report of " + location + ".\n";
+        emailContent += templateEngine.process("emailTemplates.html", ct);
+        this.sendEmail(to,subject,emailContent);
+
+    }
 }
 

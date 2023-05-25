@@ -11,12 +11,19 @@ import java.util.List;
 
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
-    List<Stock> findByProductId(Integer ID);
+
+    List<Stock> findByid(Integer generatedId);
+
+
+
 
     @Query("SELECT DISTINCT s.id FROM Stock s")
     List<Integer> findAllProductIds();
 
     @Query("SELECT DISTINCT s.id FROM Stock s WHERE s.product.name = :name")
     List<Integer> findAllProductIdsByName(@Param("name") String name);
+
+    @Query("SELECT DISTINCT s.id FROM Stock s WHERE s.location.name = :name")
+    List<Integer> findAllProductIdsByLocation(@Param("name") String location);
 
 }

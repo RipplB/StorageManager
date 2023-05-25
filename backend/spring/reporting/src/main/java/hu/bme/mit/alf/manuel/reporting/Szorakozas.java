@@ -24,6 +24,7 @@ public class Szorakozas {
             String line;
             String dr = "Daily Report";
             String ReportByName = "Report By Name";
+            String ReportByLoc = "Report By Loc";
             String firstline = reader.readLine();
             System.out.println(firstline);
 
@@ -45,6 +46,14 @@ public class Szorakozas {
                 while ((line = reader.readLine()) != null) {
                     log.info("{} számára elküldve", line);
                     emailService.sendStockReportByName(line, "Report By Name", secondLine);
+                }
+            }
+            else if (ReportByLoc.equals(firstline)) {
+                log.info("Ez bizony egy Report By Location küldés");
+                String secondLine = reader.readLine(); // Második sor kiolvasása
+                while ((line = reader.readLine()) != null) {
+                    log.info("{} számára elküldve", line);
+                    emailService.sendStockReportByLocation(line, "Report By Location", secondLine);
                 }
             }
         } catch (IOException e) {
