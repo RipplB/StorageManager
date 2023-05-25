@@ -1,11 +1,11 @@
 plugins {
 	id("java-library")
-	id("org.springframework.boot") version "3.1.0"
+	id("org.springframework.boot") version "3.1.0" apply false
 	id("io.spring.dependency-management") version "1.1.0"
 }
 
 group = "hu.bme.mit.alf.manuel"
-version = "0.0.1-SNAPSHOT"
+version = findProperty("commonVersion")!!
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
@@ -24,6 +24,12 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.amqp:spring-rabbit-test")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+	}
 }
 
 tasks.withType<Test> {
