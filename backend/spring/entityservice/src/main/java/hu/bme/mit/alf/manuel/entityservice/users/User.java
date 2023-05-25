@@ -24,7 +24,7 @@ public class User {
 
 	private String fullName;
 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Role> roles;
 
 }
