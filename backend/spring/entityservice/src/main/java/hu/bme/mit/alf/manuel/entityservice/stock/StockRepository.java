@@ -1,5 +1,6 @@
 package hu.bme.mit.alf.manuel.entityservice.stock;
 
+import hu.bme.mit.alf.manuel.entityservice.stock.location.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -11,19 +12,8 @@ import java.util.List;
 
 @Repository
 public interface StockRepository extends JpaRepository<Stock, Integer> {
+    List<Stock> findAllByProduct_Name(String name);
+    List<Stock> findAllByLocation_Name(String location);
 
-    List<Stock> findByid(Integer generatedId);
-
-
-
-
-    @Query("SELECT DISTINCT s.id FROM Stock s")
-    List<Integer> findAllProductIds();
-
-    @Query("SELECT DISTINCT s.id FROM Stock s WHERE s.product.name = :name")
-    List<Integer> findAllProductIdsByName(@Param("name") String name);
-
-    @Query("SELECT DISTINCT s.id FROM Stock s WHERE s.location.name = :name")
-    List<Integer> findAllProductIdsByLocation(@Param("name") String location);
 
 }

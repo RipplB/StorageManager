@@ -12,13 +12,13 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-public class Szorakozas {
+public class Email_Controller {
     private MqService mqs;
     private final SendGridEmailService emailService;
 
 
     void LogMessage(String s) {
-        log.info("Az alábbi üzenet érkezett: {}", s);
+        log.info("Incoming message: {}", s);
 
         try (BufferedReader reader = new BufferedReader(new StringReader(s))) {
             String line;
@@ -29,41 +29,41 @@ public class Szorakozas {
             System.out.println(firstline);
 
             if (s.isEmpty()) {
-                log.info("Az üzenet üres.");
+                log.info("Message is empty.");
                 return;
             }
 
             if (dr.equals(firstline)) {
-                log.info("Ez bizony egy Daily Report küldés");
+                log.info("It is a Daily Report request");
                 while ((line = reader.readLine()) != null) {
-                    log.info("{} számára elküldve", line);
+                    log.info("Sent to {}", line);
                     emailService.sendStockReport(line, "Report");
                 }
             }
             else if (ReportByName.equals(firstline)) {
-                log.info("Ez bizony egy Report By Name küldés");
+                log.info("It is a Report By Name request");
                 String secondLine = reader.readLine(); // Második sor kiolvasása
                 while ((line = reader.readLine()) != null) {
-                    log.info("{} számára elküldve", line);
+                    log.info("Sent to {}", line);
                     emailService.sendStockReportByName(line, "Report By Name", secondLine);
                 }
             }
             else if (ReportByLoc.equals(firstline)) {
-                log.info("Ez bizony egy Report By Location küldés");
+                log.info("It is a Report By Location request");
                 String secondLine = reader.readLine(); // Második sor kiolvasása
                 while ((line = reader.readLine()) != null) {
-                    log.info("{} számára elküldve", line);
+                    log.info("Sent to {}", line);
                     emailService.sendStockReportByLocation(line, "Report By Location", secondLine);
                 }
             }
         } catch (IOException e) {
-            log.error("Hiba történt az üzenet feldolgozása során: {}", e.getMessage());
+            log.error("Error while processing the message: {}", e.getMessage());
         }
     }
 
 
     @Autowired
-    Szorakozas(MqService _mqs, SendGridEmailService es){
+    Email_Controller(MqService _mqs, SendGridEmailService es){
         mqs = _mqs;
         this.emailService=es;
         mqs.setConsumer(this::LogMessage);
