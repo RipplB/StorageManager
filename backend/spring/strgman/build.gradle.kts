@@ -28,6 +28,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.session:spring-session-jdbc")
+	// https://mvnrepository.com/artifact/org.modelmapper/modelmapper
+	implementation("org.modelmapper:modelmapper:3.1.1")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
