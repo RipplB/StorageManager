@@ -32,6 +32,8 @@ dependencies {
 	implementation("org.modelmapper:modelmapper:3.1.1")
 	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-root
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
 	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-orgjson:0.11.5")
 	compileOnly("org.projectlombok:lombok")
