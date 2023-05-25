@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "hu.bme.mit.alf.manuel"
-version = "0.0.1-SNAPSHOT"
+version = findProperty("commonVersion")!!
 java.sourceCompatibility = JavaVersion.VERSION_17
 
 configurations {
