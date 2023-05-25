@@ -20,6 +20,6 @@ public class LocationDto implements Serializable {
 	@Size(max = 20)
 	@NotBlank
 	private String name;
-	@Size
+	@Size(max = 255)
 	private String description;
 }

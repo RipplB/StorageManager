@@ -9,7 +9,7 @@ public class ProductDto {
 	@Length(max = 20)
 	private String name;
 
-	@Length(max = 1000)
+	@Length(max = 255)
 	private String description;
 
 	@Length(max = 10)
