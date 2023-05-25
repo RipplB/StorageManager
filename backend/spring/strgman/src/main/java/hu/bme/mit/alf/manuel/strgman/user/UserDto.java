@@ -1,4 +1,4 @@
-package hu.bme.mit.alf.manuel.strgman.location;
+package hu.bme.mit.alf.manuel.strgman.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -8,18 +8,23 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * DTO for {@link hu.bme.mit.alf.manuel.entityservice.stock.location.Location}
+ * DTO for {@link hu.bme.mit.alf.manuel.entityservice.users.User}
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Accessors(chain = true)
-public class LocationDto implements Serializable {
-	@Size(max = 20)
-	@NotBlank
-	private String name;
+public class UserDto implements Serializable {
 	@Size(max = 255)
-	private String description;
+	@NotBlank
+	private String loginName;
+	@Size(min = 6, max = 64)
+	@NotBlank
+	private String password;
+	@Size(max = 255)
+	private String fullName;
+	private List<String> roleNames;
 }
