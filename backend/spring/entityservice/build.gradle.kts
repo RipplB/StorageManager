@@ -1,6 +1,6 @@
 plugins {
 	id("java-library")
-	id("org.springframework.boot") version "3.1.0"
+	id("org.springframework.boot") version "3.1.0" apply false
 	id("io.spring.dependency-management") version "1.1.0"
 }
 
@@ -26,6 +26,12 @@ dependencies {
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+	}
 }
 
 tasks.withType<Test> {
