@@ -5,6 +5,7 @@ import hu.bme.mit.alf.manuel.entityservice.users.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CurrentTimestamp;
 
 import java.util.Date;
 
@@ -18,6 +19,7 @@ public class StockMovement {
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
+	@CurrentTimestamp
 	private Date timestamp;
 
 	private int amount;

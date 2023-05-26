@@ -28,6 +28,7 @@ public class Stock {
 	private Location location;
 
 	@OneToMany(fetch = FetchType.EAGER)
+	@JoinColumn(name = "stock_id")
 	private List<StockMovement> movements;
 
 }
