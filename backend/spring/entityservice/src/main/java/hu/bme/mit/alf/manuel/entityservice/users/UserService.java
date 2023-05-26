@@ -32,4 +32,8 @@ public class UserService {
 		return userRepository.save(user).getId().toString();
 	}
 
+	public long numberOfUsers() {
+		return userRepository.count();
+	}
+
 }
