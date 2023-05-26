@@ -18,9 +18,6 @@ public class StockMovement {
 	@Column(name = "id", nullable = false)
 	private Integer id;
 
-	@ManyToOne
-	private MovementType type;
-
 	private Date timestamp;
 
 	private int amount;
@@ -30,5 +27,12 @@ public class StockMovement {
 
 	@ManyToOne
 	private Stock stock;
+
+	@Enumerated(EnumType.STRING)
+	private Type type;
+
+	public enum Type {
+		INBOUND, OUTBOUND, INTERNAL
+	}
 
 }
