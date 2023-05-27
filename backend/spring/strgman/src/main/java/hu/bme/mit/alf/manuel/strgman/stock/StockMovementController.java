@@ -50,7 +50,7 @@ public class StockMovementController extends ValidatorBaseController {
 		stockDto.setProduct(productOptional.get());
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
-			return ResponseEntity.ok(String.valueOf(movementService.receiveStock(stockDto, employee, StockMovement.Type.INBOUND, movementDto.getAmount())));
+			return ResponseEntity.ok(String.valueOf(movementService.receiveStock(stockDto, employee, movementDto.getAmount())));
 		} catch (Exception e) {
 			log.error("Failed saving stock receive", e);
 			return ResponseEntity.internalServerError().build();

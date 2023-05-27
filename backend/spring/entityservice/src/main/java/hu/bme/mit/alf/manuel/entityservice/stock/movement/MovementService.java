@@ -15,13 +15,13 @@ public class MovementService {
 	private final StockRepository stockRepository;
 	private final StockMovementRepository stockMovementRepository;
 
-	public Integer receiveStock(Stock stock, User employee, StockMovement.Type type, int amount) {
+	public Integer receiveStock(Stock stock, User employee, int amount) {
 		Optional<Stock> existingStock = stockRepository.findByProductAndLocation(stock.getProduct(), stock.getLocation());
 		Stock persistentStock = existingStock.orElseGet(() -> stockRepository.save(stock));
 		StockMovement stockMovement = new StockMovement();
 		stockMovement.setStock(persistentStock);
 		stockMovement.setEmployee(employee);
-		stockMovement.setType(type);
+		stockMovement.setType(StockMovement.Type.INBOUND);
 		stockMovement.setAmount(amount);
 		StockMovement persistentMovement = stockMovementRepository.save(stockMovement);
 		persistentStock.setAmount(persistentStock.getAmount() + amount);
