@@ -1,25 +1,19 @@
 package hu.bme.mit.alf.manuel.strgman.stock;
 
-import hu.bme.mit.alf.manuel.entityservice.EntityService;
-import hu.bme.mit.alf.manuel.entityservice.product.Product;
-import hu.bme.mit.alf.manuel.entityservice.stock.Stock;
-import hu.bme.mit.alf.manuel.entityservice.stock.location.Location;
+import hu.bme.mit.alf.manuel.entityservice.stock.movement.MovementDto;
 import hu.bme.mit.alf.manuel.entityservice.stock.movement.MovementService;
-import hu.bme.mit.alf.manuel.entityservice.stock.movement.StockMovement;
+import hu.bme.mit.alf.manuel.entityservice.stock.movement.exception.MovementException;
 import hu.bme.mit.alf.manuel.entityservice.users.User;
 import hu.bme.mit.alf.manuel.entityservice.users.UserService;
 import hu.bme.mit.alf.manuel.strgman.ValidatorBaseController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -27,33 +21,53 @@ import java.util.Optional;
 @RequestMapping("/${endpoints.stocks}")
 public class StockMovementController extends ValidatorBaseController {
 
-	private final EntityService entityService;
 	private final MovementService movementService;
 	private final UserService userService;
 
+	@ExceptionHandler({MovementException.class})
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public String notFound(MovementException exception) {
+		log.error(exception.getMessage());
+		return exception.getMessage();
+	}
+
 	@PostMapping("/receive")
-	public ResponseEntity<String> receiveStock(@Valid @RequestBody MovementDto movementDto, Principal principal) {
-		Optional<Product> productOptional = entityService.getProduct(movementDto.getProduct());
-		Optional<Location> locationOptional = entityService.getLocation(movementDto.getLocation());
-		if (productOptional.isEmpty()) {
-			String msg = String.format("Product with id %d does not exist", movementDto.getProduct());
-			log.error(msg);
-			return ResponseEntity.badRequest().body(msg);
-		}
-		if (locationOptional.isEmpty()) {
-			String msg = String.format("Location with id %d does not exist", movementDto.getLocation());
-			log.error(msg);
-			return ResponseEntity.badRequest().body(msg);
-		}
-		Stock stockDto = new Stock();
-		stockDto.setLocation(locationOptional.get());
-		stockDto.setProduct(productOptional.get());
+	public ResponseEntity<String> receiveStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
-			return ResponseEntity.ok(String.valueOf(movementService.receiveStock(stockDto, employee, StockMovement.Type.INBOUND, movementDto.getAmount())));
+			return ResponseEntity.ok(String.valueOf(movementService.receiveStock(movementDto, employee)));
+		} catch (MovementException mve) {
+			throw mve;
 		} catch (Exception e) {
 			log.error("Failed saving stock receive", e);
 			return ResponseEntity.internalServerError().build();
 		}
 	}
+
+	@PostMapping("/release")
+	public ResponseEntity<String> releaseStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
+		User employee = userService.getByUsername(principal.getName()).orElseThrow();
+		try {
+			return ResponseEntity.ok(String.valueOf(movementService.releaseStock(movementDto, employee)));
+		} catch (MovementException mve) {
+			throw mve;
+		} catch (Exception e) {
+			log.error("Failed saving stock release", e);
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
+	@PostMapping("/internal")
+	public ResponseEntity<String> moveStockInternally(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
+		User employee = userService.getByUsername(principal.getName()).orElseThrow();
+		try {
+			return ResponseEntity.ok(String.valueOf(movementService.moveStockInternal(movementDto, employee)));
+		} catch (MovementException mve) {
+			throw mve;
+		} catch (Exception e) {
+			log.error("Failed saving internal stock movement", e);
+			return ResponseEntity.internalServerError().build();
+		}
+	}
+
 }
