@@ -1,5 +1,6 @@
 package hu.bme.mit.alf.manuel.strgman.user;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -27,4 +28,6 @@ public class UserDto implements Serializable {
 	@Size(max = 255)
 	private String fullName;
 	private List<String> roleNames;
+	@Email
+	private String email;
 }
