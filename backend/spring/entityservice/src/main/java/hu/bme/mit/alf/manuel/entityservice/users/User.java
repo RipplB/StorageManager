@@ -25,6 +25,8 @@ public class User implements Serializable {
 
 	private String fullName;
 
+	private String email;
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	private List<Role> roles;
 
