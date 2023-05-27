@@ -1,4 +1,4 @@
-package hu.bme.mit.alf.manuel.strgman.stock;
+package hu.bme.mit.alf.manuel.entityservice.stock.movement;
 
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -14,5 +14,7 @@ public class MovementDto {
 	@Positive
 	private int amount;
 	@Positive
-	private Integer location;
+	private Integer sourceLocation;
+	@Positive
+	private Integer targetLocation;
 }
