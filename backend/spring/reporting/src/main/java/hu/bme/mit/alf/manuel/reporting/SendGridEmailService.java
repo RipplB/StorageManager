@@ -18,7 +18,6 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 
-import static org.hibernate.query.sqm.tree.SqmNode.log;
 
 
 @Service
