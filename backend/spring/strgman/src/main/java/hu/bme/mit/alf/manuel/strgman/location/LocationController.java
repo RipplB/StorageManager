@@ -5,6 +5,7 @@ import hu.bme.mit.alf.manuel.entityservice.stock.location.Location;
 import hu.bme.mit.alf.manuel.strgman.ValidatorBaseController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/${endpoints.location}")
 @RequiredArgsConstructor
@@ -39,6 +41,7 @@ public class LocationController extends ValidatorBaseController {
 	@PostMapping
 	public ResponseEntity<Integer> createLocation(@RequestBody @Valid LocationDto locationDto) {
 		Integer id = entityService.saveLocation(modelMapper.map(locationDto, Location.class));
+		log.info("New location added: "+locationDto.getName());
 		return ResponseEntity.created(URI.create(String.format("%s/%d", endpoint, id))).body(id);
 	}
 
@@ -48,6 +51,7 @@ public class LocationController extends ValidatorBaseController {
 		Location location = modelMapper.map(locationDto, Location.class);
 		location.setId(id);
 		entityService.saveLocation(location);
+		log.info("New location added: "+locationDto.getName());
 	}
 
 }

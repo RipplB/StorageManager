@@ -1,10 +1,8 @@
 package hu.bme.mit.alf.manuel.reporting;
-
 import hu.bme.mit.alf.manuel.mqclient.MqService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.io.IOException;
@@ -24,9 +22,8 @@ public class Email_Controller {
             String line;
             String dr = "Daily Report";
             String ReportByName = "Report By Name";
-            String ReportByLoc = "Report By Loc";
+            String ReportByLoc = "Report By Location";
             String firstline = reader.readLine();
-            System.out.println(firstline);
 
             if (s.isEmpty()) {
                 log.info("Message is empty.");
@@ -60,7 +57,6 @@ public class Email_Controller {
             log.error("Error while processing the message: {}", e.getMessage());
         }
     }
-
 
     @Autowired
     Email_Controller(MqService _mqs, SendGridEmailService es){

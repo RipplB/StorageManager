@@ -13,7 +13,6 @@ import java.util.Optional;
 public interface StockRepository extends JpaRepository<Stock, Integer> {
     List<Stock> findAllByProduct_Name(String name);
     List<Stock> findAllByLocation_Name(String location);
-
     Optional<Stock> findByProductAndLocation(Product product, Location location);
 
 }

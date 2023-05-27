@@ -47,19 +47,14 @@ public class SendGridEmailService {
         Email from = new Email("arionpap4444@gmail.com");
         Email toEmail = new Email(to);
         Content emailContent = new Content("text/html", content);
-
         Mail mail = new Mail(from, subject, toEmail, emailContent);
-
         SendGrid sg = new SendGrid(sendGridApiKey);
         Request request = new Request();
-
         try {
             request.setMethod(Method.POST);
             request.setEndpoint("mail/send");
             request.setBody(mail.build());
-
             Response response = sg.api(request);
-
             log.debug(String.valueOf(response.getStatusCode()));
             log.debug(response.getBody());
             log.debug(response.getHeaders().toString());
@@ -73,7 +68,6 @@ public class SendGridEmailService {
         List<Stock> stocks = stockRepository.findAll();
         Context ct = new Context();
         ct.setVariable("stocks",stocks);
-
         String emailContent = "This is your daily report.\n";
         emailContent += templateEngine.process("emailTemplates.html", ct);
         this.sendEmail(to,subject,emailContent);
@@ -83,7 +77,6 @@ public class SendGridEmailService {
         List<Stock> stocks = stockRepository.findAllByProduct_Name(name);
         Context ct = new Context();
         ct.setVariable("stocks",stocks);
-
         String emailContent = "This is your report of " + name + ".\n";
         emailContent += templateEngine.process("emailTemplates.html", ct);
         this.sendEmail(to,subject,emailContent);
@@ -93,11 +86,9 @@ public class SendGridEmailService {
         List<Stock> stocksById = stockRepository.findAllByLocation_Name(location);
         Context ct = new Context();
         ct.setVariable("stocks",stocksById);
-
         String emailContent = "This is your report of " + location + ".\n";
         emailContent += templateEngine.process("emailTemplates.html", ct);
         this.sendEmail(to,subject,emailContent);
-
     }
 }
 

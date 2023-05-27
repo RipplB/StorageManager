@@ -25,7 +25,7 @@ public class ReportingController extends ValidatorBaseController {
 
     @PostMapping("/report")
     public ResponseEntity<String> receiveStock(@Valid @RequestBody ReportingDto reportingDto) {
-        ArrayList<String> types = new ArrayList<>(Arrays.asList("Daily", "Name", "Location"));
+        ArrayList<String> types = new ArrayList<>(Arrays.asList("Daily Report", "Report By Name", "Report By Location"));
 
         if (!types.contains(reportingDto.getType())) {
             String msg = String.format("There is no reporting type called %s", reportingDto.getType());
