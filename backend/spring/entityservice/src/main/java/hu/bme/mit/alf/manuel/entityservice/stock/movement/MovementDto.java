@@ -3,9 +3,11 @@ package hu.bme.mit.alf.manuel.entityservice.stock.movement;
 import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Setter
 @Getter
 public class MovementDto {
