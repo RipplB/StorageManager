@@ -38,6 +38,17 @@ ApplicationWindow {
         function onLoginSuccess() {
             loginPopup.close();
         }
+        function onRolesChanged(list) {
+            console.log(list.length)
+            console.log(list.includes("OFFICE"))
+            toolBtnProduct.visible = list.includes("OFFICE")
+            toolBtnLocation.visible = list.includes("STORAGE")
+            toolBtnReceive.visible = list.includes("STORAGE")
+            toolBtnRelease.visible = list.includes("STORAGE")
+            toolBtnMove.visible = list.includes("STORAGE")
+            toolBtnReport.visible = list.includes("OFFICE")
+            toolBtnUsers.visible = list.includes("MANAGER")
+        }
     }
     Popup {
         id: loginPopup
@@ -92,41 +103,49 @@ ApplicationWindow {
             RowLayout {
                 anchors.fill: parent
                 ToolButton {
+                    id: toolBtnProduct
                     text: qsTr("Product")
                     font.bold: dataView.currentIndex === Main.PRODUCT
                     onClicked: dataView.currentIndex = Main.PRODUCT
                 }
                 ToolButton {
+                    id: toolBtnLocation
                     text: qsTr("Location")
                     font.bold: dataView.currentIndex === Main.LOCATION
                     onClicked: dataView.currentIndex = Main.LOCATION
                 }
                 ToolButton {
+                    id: toolBtnReceive
                     text: qsTr("Receive goods")
                     font.bold: dataView.currentIndex === Main.RECEIVE
                     onClicked: dataView.currentIndex = Main.RECEIVE
                 }
                 ToolButton {
+                    id: toolBtnRelease
                     text: qsTr("Release goods")
                     font.bold: dataView.currentIndex === Main.RELEASE
                     onClicked: dataView.currentIndex = Main.RELEASE
                 }
                 ToolButton {
+                    id: toolBtnMove
                     text: qsTr("Move goods")
                     font.bold: dataView.currentIndex === Main.INTERNAL
                     onClicked: dataView.currentIndex = Main.INTERNAL
                 }
                 ToolButton {
+                    id: toolBtnStock
                     text: qsTr("Stock")
                     font.bold: dataView.currentIndex === Main.STOCK
                     onClicked: dataView.currentIndex = Main.STOCK
                 }
                 ToolButton {
+                    id: toolBtnReport
                     text: qsTr("Reporting")
                     font.bold: dataView.currentIndex === Main.REPORT
                     onClicked: dataView.currentIndex = Main.REPORT
                 }
                 ToolButton {
+                    id: toolBtnUsers
                     text: qsTr("Users")
                     font.bold: dataView.currentIndex === Main.USERS
                     onClicked: dataView.currentIndex = Main.USERS

@@ -1,11 +1,13 @@
 #include "loginservice.h"
 #include "util.h"
 #include <QDebug>
+#include <QVariant>
+#include <QJsonArray>
 
 LoginService::LoginService(QObject *parent)
     : AbstractResource{parent}
 {
-
+    currentRoles = QList<QString>();
 }
 
 void LoginService::login(const QString& url, const QVariantMap& data)
@@ -23,8 +25,16 @@ void LoginService::loginRequestFinished(QNetworkReply* reply, const QVariantMap&
 {
     std::optional<QJsonObject> json = byteArrayToJsonObject(reply->readAll());
     if (json && json->contains("value")) {
-        qDebug() << json->value("value").toString().toStdString();
+        currentRoles = QList<QString>();
+        QList<QVariant> roleList = byteArrayToJsonObject(QByteArray::fromBase64(json->value("value").toString().split(".")[1].toUtf8()))->value("roles").toArray().toVariantList().toList();
+        for (auto iter = roleList.begin(), end = roleList.end(); iter != end; iter++)
+            currentRoles.append(iter->toString());
+        emit rolesChanged(currentRoles);
         m_manager->setAuthorizationToken(json->value("value").toVariant().toByteArray());
         emit loginSuccess();
     }
+}
+
+QList<QString> LoginService::getCurrentRoles() const {
+    return currentRoles;
 }
