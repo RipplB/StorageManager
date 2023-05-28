@@ -13,8 +13,9 @@ public:
     explicit LoginService(QObject *parent = nullptr);
     Q_INVOKABLE void login(const QString& url, const QVariantMap& data);
     Q_INVOKABLE QList<QString> getCurrentRoles() const;
+    Q_INVOKABLE void refresh();
 private:
-    void loginRequestFinished(QNetworkReply* reply, const QVariantMap& data);
+    void loginRequestFinished(QNetworkReply* reply);
     QList<QString> currentRoles;
 signals:
     void loginSuccess();

@@ -16,12 +16,12 @@ void LoginService::login(const QString& url, const QVariantMap& data)
     RestAccessManager::ResponseCallback callback =
         [this,  data](QNetworkReply* reply, bool success) {
             if (success)
-                loginRequestFinished(reply, data);
+                loginRequestFinished(reply);
         };
     m_manager->post("/auth/login", data, callback);
 }
 
-void LoginService::loginRequestFinished(QNetworkReply* reply, const QVariantMap& data)
+void LoginService::loginRequestFinished(QNetworkReply* reply)
 {
     std::optional<QJsonObject> json = byteArrayToJsonObject(reply->readAll());
     if (json && json->contains("value")) {
@@ -37,4 +37,14 @@ void LoginService::loginRequestFinished(QNetworkReply* reply, const QVariantMap&
 
 QList<QString> LoginService::getCurrentRoles() const {
     return currentRoles;
+}
+
+void LoginService::refresh()
+{
+    RestAccessManager::ResponseCallback callback =
+        [this](QNetworkReply* reply, bool success) {
+            if (success)
+                loginRequestFinished(reply);
+        };
+    m_manager->post("/auth/refresh", QVariantMap(), callback);
 }

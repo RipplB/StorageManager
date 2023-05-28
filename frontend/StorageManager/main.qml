@@ -36,11 +36,10 @@ ApplicationWindow {
     Connections {
         target: loginService
         function onLoginSuccess() {
-            loginPopup.close();
+            loginPopup.close()
+            refreshTimer.start()
         }
         function onRolesChanged(list) {
-            console.log(list.length)
-            console.log(list.includes("OFFICE"))
             toolBtnProduct.visible = list.includes("OFFICE")
             toolBtnLocation.visible = list.includes("STORAGE")
             toolBtnReceive.visible = list.includes("STORAGE")
@@ -50,6 +49,13 @@ ApplicationWindow {
             toolBtnUsers.visible = list.includes("MANAGER")
         }
     }
+    Timer {
+        id: refreshTimer
+        interval: 10000
+        repeat: true
+        onTriggered: loginService.refresh()
+    }
+
     Popup {
         id: loginPopup
         anchors.centerIn: parent
