@@ -13,10 +13,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -31,7 +32,9 @@ public class AuthController {
 	private final UserService userService;
 
 	@PostMapping("/login")
-	public ResponseEntity<GenericDto<String>> login(@RequestParam String username, @RequestParam String password) {
+	public ResponseEntity<GenericDto<String>> login(@RequestBody Map<String, String> json) {
+		String username = json.get("username");
+		String password = json.get("password");
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
