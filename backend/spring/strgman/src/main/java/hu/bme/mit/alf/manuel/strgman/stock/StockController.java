@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -55,6 +56,7 @@ public class StockController extends ValidatorBaseController {
 	}
 
 	@PostMapping("/receive")
+	@Secured("STORAGE")
 	public ResponseEntity<String> receiveStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
@@ -68,6 +70,7 @@ public class StockController extends ValidatorBaseController {
 	}
 
 	@PostMapping("/release")
+	@Secured("STORAGE")
 	public ResponseEntity<String> releaseStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
@@ -81,6 +84,7 @@ public class StockController extends ValidatorBaseController {
 	}
 
 	@PostMapping("/internal")
+	@Secured("STORAGE")
 	public ResponseEntity<String> moveStockInternally(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
