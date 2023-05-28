@@ -14,6 +14,8 @@ import java.util.Optional;
 public interface StockRepository extends JpaRepository<Stock, Integer> {
     List<Stock> findAllByProduct_Name(String name);
     List<Stock> findAllByLocation_Name(String location);
+    List<Stock> findAllByProduct(Product product);
+    List<Stock> findAllByLocation(Location location);
     Optional<Stock> findByProductAndLocation(Product product, Location location);
 
     @Query("SELECT s FROM Stock s WHERE s.product IN (SELECT product FROM Stock GROUP BY product HAVING COUNT(*) > 1)")
