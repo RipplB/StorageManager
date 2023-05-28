@@ -43,6 +43,12 @@ bool RestAccessManager::sslSupported() const
 #endif
 }
 
+QByteArray authHeader(QByteArray token)
+{
+    std::string header = "Bearer " + token.toStdString();
+    return QByteArray(header.c_str());
+}
+
 void RestAccessManager::setAuthorizationToken(const QByteArray& token)
 {
     m_authorizationToken = token;
@@ -54,7 +60,7 @@ void RestAccessManager::post(const QString& api, const QVariantMap& value,
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
-    request.setRawHeader(authorizationHeader, m_authorizationToken);
+    request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
     QNetworkReply* reply = QNetworkAccessManager::post(request,
                                QJsonDocument::fromVariant(value).toJson(QJsonDocument::Compact));
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
@@ -68,6 +74,7 @@ void RestAccessManager::get(const QString& api, const QUrlQuery& parameters,
     m_url.setPath(api);
     m_url.setQuery(parameters);
     auto request = QNetworkRequest(m_url);
+    request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
     QNetworkReply* reply = QNetworkAccessManager::get(request);
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
         callback(reply, httpResponseSuccess(reply));
@@ -80,7 +87,7 @@ void RestAccessManager::put(const QString& api, const QVariantMap& value,
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
-    request.setRawHeader(authorizationHeader, m_authorizationToken);
+    request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
     QNetworkReply* reply = QNetworkAccessManager::put(request,
                              QJsonDocument::fromVariant(value).toJson(QJsonDocument::Compact));
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
@@ -92,7 +99,7 @@ void RestAccessManager::deleteResource(const QString& api, ResponseCallback call
 {
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);
-    request.setRawHeader(authorizationHeader, m_authorizationToken);
+    request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
     QNetworkReply* reply = QNetworkAccessManager::deleteResource(request);
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
        callback(reply, httpResponseSuccess(reply));
