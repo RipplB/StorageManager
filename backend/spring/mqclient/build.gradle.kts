@@ -20,6 +20,9 @@ repositories {
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-amqp")
+    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
