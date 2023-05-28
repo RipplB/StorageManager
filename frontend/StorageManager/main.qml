@@ -20,7 +20,12 @@ Window {
             id: loginService
         }
     }
-
+    Connections {
+        target: loginService
+        function onLoginSuccess() {
+            loginPopup.close();
+        }
+    }
     Popup {
         id: loginPopup
         anchors.centerIn: parent
