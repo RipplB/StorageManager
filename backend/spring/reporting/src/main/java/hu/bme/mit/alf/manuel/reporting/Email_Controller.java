@@ -39,7 +39,7 @@ public class Email_Controller {
             }
             else if (ReportByName.equals(firstline)) {
                 log.info("It is a Report By Name request");
-                String secondLine = reader.readLine(); // Második sor kiolvasása
+                String secondLine = reader.readLine();
                 while ((line = reader.readLine()) != null) {
                     log.info("Sent to {}", line);
                     emailService.sendStockReportByName(line, "Report By Name", secondLine);
@@ -47,7 +47,7 @@ public class Email_Controller {
             }
             else if (ReportByLoc.equals(firstline)) {
                 log.info("It is a Report By Location request");
-                String secondLine = reader.readLine(); // Második sor kiolvasása
+                String secondLine = reader.readLine();
                 while ((line = reader.readLine()) != null) {
                     log.info("Sent to {}", line);
                     emailService.sendStockReportByLocation(line, "Report By Location", secondLine);
