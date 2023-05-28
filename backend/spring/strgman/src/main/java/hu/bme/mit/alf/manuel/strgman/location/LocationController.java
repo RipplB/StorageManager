@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -39,6 +40,7 @@ public class LocationController extends ValidatorBaseController {
 	}
 
 	@PostMapping
+	@Secured("STORAGE")
 	public ResponseEntity<Integer> createLocation(@RequestBody @Valid LocationDto locationDto) {
 		Integer id = entityService.saveLocation(modelMapper.map(locationDto, Location.class));
 		log.info("New location added: "+locationDto.getName());
@@ -46,8 +48,10 @@ public class LocationController extends ValidatorBaseController {
 	}
 
 	@PutMapping("/{id}")
+	@Secured("STORAGE")
 	public void updateLocation(@PathVariable Integer id, @RequestBody @Valid LocationDto locationDto) {
-		entityService.getLocation(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if (entityService.getLocation(id).isEmpty())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		Location location = modelMapper.map(locationDto, Location.class);
 		location.setId(id);
 		entityService.saveLocation(location);

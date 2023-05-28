@@ -1,5 +1,6 @@
 package hu.bme.mit.alf.manuel.entityservice.stock.movement;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import hu.bme.mit.alf.manuel.entityservice.stock.Stock;
 import hu.bme.mit.alf.manuel.entityservice.users.User;
 import jakarta.persistence.*;
@@ -27,6 +28,7 @@ public class StockMovement {
 	@ManyToOne
 	private User employee;
 
+	@JsonIgnore
 	@ManyToOne
 	private Stock stock;
 
