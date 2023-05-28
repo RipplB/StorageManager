@@ -10,7 +10,7 @@ import java.io.IOException;
 
 @Component
 @Slf4j
-public class Email_Controller {
+public class EmailController {
     private MqService mqs;
     private final SendGridEmailService emailService;
 
@@ -21,8 +21,8 @@ public class Email_Controller {
         try (BufferedReader reader = new BufferedReader(new StringReader(s))) {
             String line;
             String dr = "Daily Report";
-            String ReportByName = "Report By Name";
-            String ReportByLoc = "Report By Location";
+            String reportByName = "Report By Name";
+            String reportByLoc = "Report By Location";
             String firstline = reader.readLine();
 
             if (s.isEmpty()) {
@@ -37,7 +37,7 @@ public class Email_Controller {
                     emailService.sendStockReport(line, "Report");
                 }
             }
-            else if (ReportByName.equals(firstline)) {
+            else if (reportByName.equals(firstline)) {
                 log.info("It is a Report By Name request");
                 String secondLine = reader.readLine();
                 while ((line = reader.readLine()) != null) {
@@ -45,7 +45,7 @@ public class Email_Controller {
                     emailService.sendStockReportByName(line, "Report By Name", secondLine);
                 }
             }
-            else if (ReportByLoc.equals(firstline)) {
+            else if (reportByLoc.equals(firstline)) {
                 log.info("It is a Report By Location request");
                 String secondLine = reader.readLine();
                 while ((line = reader.readLine()) != null) {
@@ -59,7 +59,7 @@ public class Email_Controller {
     }
 
     @Autowired
-    Email_Controller(MqService _mqs, SendGridEmailService es){
+    EmailController(MqService _mqs, SendGridEmailService es){
         mqs = _mqs;
         this.emailService=es;
         mqs.setConsumer(this::LogMessage);

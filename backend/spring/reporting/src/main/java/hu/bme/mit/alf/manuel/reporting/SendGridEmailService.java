@@ -1,36 +1,36 @@
 package hu.bme.mit.alf.manuel.reporting;
-import com.sendgrid.*;
+
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
-import hu.bme.mit.alf.manuel.entityservice.product.Product;
+import hu.bme.mit.alf.manuel.entityservice.stock.Stock;
 import hu.bme.mit.alf.manuel.entityservice.stock.StockRepository;
 import hu.bme.mit.alf.manuel.entityservice.stock.movement.StockMovement;
 import hu.bme.mit.alf.manuel.entityservice.stock.movement.StockMovementRepository;
-import hu.bme.mit.alf.manuel.entityservice.users.Role;
 import hu.bme.mit.alf.manuel.entityservice.users.User;
 import hu.bme.mit.alf.manuel.entityservice.users.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import hu.bme.mit.alf.manuel.entityservice.stock.Stock;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import lombok.extern.slf4j.Slf4j;
 
 
 
@@ -38,6 +38,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SendGridEmailService {
+    private static final String EMAIL_TEMPLATE = "emailTemplates.html";
+    private static final String TEMPLATE_VARIABLE_STOCKS = "stocks";
+    
     @Autowired
     private StockMovementRepository stockMovementRepository;
     @Value("${sendgrid.api.key}")
@@ -86,9 +89,9 @@ public class SendGridEmailService {
     public void sendStockReport(String to, String subject) {
         List<Stock> stocks = stockRepository.findAll();
         Context ct = new Context();
-        ct.setVariable("stocks",stocks);
+        ct.setVariable(TEMPLATE_VARIABLE_STOCKS,stocks);
         String emailContent = "This is your daily report.\n";
-        emailContent += templateEngine.process("emailTemplates.html", ct);
+        emailContent += templateEngine.process(EMAIL_TEMPLATE, ct);
         this.sendEmail(to,subject,emailContent);
     }
 
@@ -107,8 +110,8 @@ public class SendGridEmailService {
         List<User> to = userRepository.findUsersByRoles_Name("STORAGE");
         List<Stock> stocks = stockRepository.getMultipleProducts();
         Context ct = new Context();
-        ct.setVariable("stocks",stocks);
-        String emailContent = templateEngine.process("emailTemplates.html", ct);
+        ct.setVariable(TEMPLATE_VARIABLE_STOCKS,stocks);
+        String emailContent = templateEngine.process(EMAIL_TEMPLATE, ct);
         for (User who : to) {
             log.info("Report of objects that need to move sent to {}",who.getEmail());
             this.sendEmail(who.getEmail(),"Report of objects that need to move",emailContent);
@@ -130,8 +133,8 @@ public class SendGridEmailService {
             }
         }
         Context ct = new Context();
-        ct.setVariable("stocks", stocks);
-        String emailContent = templateEngine.process("emailTemplates.html", ct);
+        ct.setVariable(TEMPLATE_VARIABLE_STOCKS, stocks);
+        String emailContent = templateEngine.process(EMAIL_TEMPLATE, ct);
         for (User who : to) {
             log.info("Report of static objects sent to {}", who.getEmail());
             this.sendEmail(who.getEmail(), "Report of static objects", emailContent);
@@ -145,18 +148,18 @@ public class SendGridEmailService {
     public void sendStockReportByName(String to, String subject, String name){
         List<Stock> stocks = stockRepository.findAllByProduct_Name(name);
         Context ct = new Context();
-        ct.setVariable("stocks",stocks);
+        ct.setVariable(TEMPLATE_VARIABLE_STOCKS,stocks);
         String emailContent = "This is your report of " + name + ".\n";
-        emailContent += templateEngine.process("emailTemplates.html", ct);
+        emailContent += templateEngine.process(EMAIL_TEMPLATE, ct);
         this.sendEmail(to,subject,emailContent);
 
     }
     public void sendStockReportByLocation(String to, String subject, String location){
         List<Stock> stocksById = stockRepository.findAllByLocation_Name(location);
         Context ct = new Context();
-        ct.setVariable("stocks",stocksById);
+        ct.setVariable(TEMPLATE_VARIABLE_STOCKS,stocksById);
         String emailContent = "This is your report of " + location + ".\n";
-        emailContent += templateEngine.process("emailTemplates.html", ct);
+        emailContent += templateEngine.process(EMAIL_TEMPLATE, ct);
         this.sendEmail(to,subject,emailContent);
     }
 }
