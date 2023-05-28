@@ -22,6 +22,8 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+	// https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations
+	implementation("com.fasterxml.jackson.core:jackson-annotations:2.15.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.postgresql:postgresql")
 	annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
