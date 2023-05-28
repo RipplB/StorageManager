@@ -9,6 +9,7 @@ import hu.bme.mit.alf.manuel.entityservice.stock.movement.MovementService;
 import hu.bme.mit.alf.manuel.entityservice.stock.movement.exception.MovementException;
 import hu.bme.mit.alf.manuel.entityservice.users.User;
 import hu.bme.mit.alf.manuel.entityservice.users.UserService;
+import hu.bme.mit.alf.manuel.strgman.GenericDto;
 import hu.bme.mit.alf.manuel.strgman.ValidatorBaseController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -57,10 +58,10 @@ public class StockController extends ValidatorBaseController {
 
 	@PostMapping("/receive")
 	@Secured("STORAGE")
-	public ResponseEntity<String> receiveStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
+	public ResponseEntity<GenericDto<String>> receiveStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
-			return ResponseEntity.ok(String.valueOf(movementService.receiveStock(movementDto, employee)));
+			return ResponseEntity.ok(new GenericDto<>(String.valueOf(movementService.receiveStock(movementDto, employee))));
 		} catch (MovementException mve) {
 			throw mve;
 		} catch (Exception e) {
@@ -71,10 +72,10 @@ public class StockController extends ValidatorBaseController {
 
 	@PostMapping("/release")
 	@Secured("STORAGE")
-	public ResponseEntity<String> releaseStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
+	public ResponseEntity<GenericDto<String>> releaseStock(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
-			return ResponseEntity.ok(String.valueOf(movementService.releaseStock(movementDto, employee)));
+			return ResponseEntity.ok(new GenericDto<>(String.valueOf(movementService.releaseStock(movementDto, employee))));
 		} catch (MovementException mve) {
 			throw mve;
 		} catch (Exception e) {
@@ -85,10 +86,10 @@ public class StockController extends ValidatorBaseController {
 
 	@PostMapping("/internal")
 	@Secured("STORAGE")
-	public ResponseEntity<String> moveStockInternally(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
+	public ResponseEntity<GenericDto<String>> moveStockInternally(@Valid @RequestBody MovementDto movementDto, Principal principal) throws MovementException {
 		User employee = userService.getByUsername(principal.getName()).orElseThrow();
 		try {
-			return ResponseEntity.ok(String.valueOf(movementService.moveStockInternal(movementDto, employee)));
+			return ResponseEntity.ok(new GenericDto<>(String.valueOf(movementService.moveStockInternal(movementDto, employee))));
 		} catch (MovementException mve) {
 			throw mve;
 		} catch (Exception e) {

@@ -2,6 +2,7 @@ package hu.bme.mit.alf.manuel.strgman.product;
 
 import hu.bme.mit.alf.manuel.entityservice.EntityService;
 import hu.bme.mit.alf.manuel.entityservice.product.Product;
+import hu.bme.mit.alf.manuel.strgman.GenericDto;
 import hu.bme.mit.alf.manuel.strgman.ValidatorBaseController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -40,9 +41,9 @@ public class ProductController extends ValidatorBaseController {
 
 	@PostMapping
 	@Secured("OFFICE")
-	public ResponseEntity<Integer> createProduct(@RequestBody @Valid ProductDto productDTO) {
+	public ResponseEntity<GenericDto<Integer>> createProduct(@RequestBody @Valid ProductDto productDTO) {
 		Integer id = entityService.saveProduct(modelMapper.map(productDTO, Product.class));
-		return ResponseEntity.created(URI.create(String.format("%s/%d", endpoint, id))).body(id);
+		return ResponseEntity.created(URI.create(String.format("%s/%d", endpoint, id))).body(new GenericDto<>(id));
 	}
 
 	@PutMapping("/{id}")

@@ -3,6 +3,7 @@ package hu.bme.mit.alf.manuel.strgman.security;
 import hu.bme.mit.alf.manuel.entityservice.users.Role;
 import hu.bme.mit.alf.manuel.entityservice.users.User;
 import hu.bme.mit.alf.manuel.entityservice.users.UserService;
+import hu.bme.mit.alf.manuel.strgman.GenericDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -30,21 +31,21 @@ public class AuthController {
 	private final UserService userService;
 
 	@PostMapping("/login")
-	public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+	public ResponseEntity<GenericDto<String>> login(@RequestParam String username, @RequestParam String password) {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		StorageUserDetails userDetails = (StorageUserDetails) authentication.getPrincipal();
 		String token = jwtHandling.generateTokenFromUsernameAndRoles(username, userDetails.getAuthorities().stream().map(Objects::toString).collect(Collectors.toSet()));
-		return ResponseEntity.ok(token);
+		return ResponseEntity.ok(new GenericDto<>(token));
 	}
 
 	@PostMapping("/refresh")
-	public ResponseEntity<String> refresh(Principal principal) {
+	public ResponseEntity<GenericDto<String>> refresh(Principal principal) {
 		String username = principal.getName();
 		User user = userService.getByUsername(username).orElseThrow();
 		String token = jwtHandling.generateTokenFromUsernameAndRoles(username, user.getRoles().stream().flatMap(UserService::unfoldCompositeRoles).map(Role::getName).collect(Collectors.toSet()));
-		return ResponseEntity.ok(token);
+		return ResponseEntity.ok(new GenericDto<>(token));
 	}
 
 }

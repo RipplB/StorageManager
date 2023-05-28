@@ -2,6 +2,7 @@ package hu.bme.mit.alf.manuel.strgman.location;
 
 import hu.bme.mit.alf.manuel.entityservice.EntityService;
 import hu.bme.mit.alf.manuel.entityservice.stock.location.Location;
+import hu.bme.mit.alf.manuel.strgman.GenericDto;
 import hu.bme.mit.alf.manuel.strgman.ValidatorBaseController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,9 +40,9 @@ public class LocationController extends ValidatorBaseController {
 
 	@PostMapping
 	@Secured("STORAGE")
-	public ResponseEntity<Integer> createLocation(@RequestBody @Valid LocationDto locationDto) {
+	public ResponseEntity<GenericDto<Integer>> createLocation(@RequestBody @Valid LocationDto locationDto) {
 		Integer id = entityService.saveLocation(modelMapper.map(locationDto, Location.class));
-		return ResponseEntity.created(URI.create(String.format("%s/%d", endpoint, id))).body(id);
+		return ResponseEntity.created(URI.create(String.format("%s/%d", endpoint, id))).body(new GenericDto<>(id));
 	}
 
 	@PutMapping("/{id}")
