@@ -2,9 +2,11 @@ package hu.bme.mit.alf.manuel.strgman.product;
 
 import hu.bme.mit.alf.manuel.entityservice.EntityService;
 import hu.bme.mit.alf.manuel.entityservice.product.Product;
+import hu.bme.mit.alf.manuel.strgman.GenericDto;
 import hu.bme.mit.alf.manuel.strgman.ValidatorBaseController;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/${endpoints.product}")
 @RequiredArgsConstructor
@@ -40,9 +43,10 @@ public class ProductController extends ValidatorBaseController {
 
 	@PostMapping
 	@Secured("OFFICE")
-	public ResponseEntity<Integer> createProduct(@RequestBody @Valid ProductDto productDTO) {
+	public ResponseEntity<GenericDto<Integer>> createProduct(@RequestBody @Valid ProductDto productDTO) {
 		Integer id = entityService.saveProduct(modelMapper.map(productDTO, Product.class));
-		return ResponseEntity.created(URI.create(String.format("%s/%d", endpoint, id))).body(id);
+		log.info("New product added: "+productDTO.getName());
+		return ResponseEntity.created(URI.create(String.format("%s/%d", endpoint, id))).body(new GenericDto<>(id));
 	}
 
 	@PutMapping("/{id}")
@@ -53,6 +57,7 @@ public class ProductController extends ValidatorBaseController {
 		Product product = modelMapper.map(productDTO, Product.class);
 		product.setId(id);
 		entityService.saveProduct(product);
+		log.info("Product updated: " + productDTO.getName());
 	}
 
 }

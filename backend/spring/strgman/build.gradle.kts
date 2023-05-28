@@ -34,7 +34,10 @@ dependencies {
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
 	// https://mvnrepository.com/artifact/org.springdoc/springdoc-openapi-starter-webmvc-ui
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0")
-	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
 	runtimeOnly("io.jsonwebtoken:jjwt-orgjson:0.11.5")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
