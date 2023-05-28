@@ -48,7 +48,8 @@ public class ProductController extends ValidatorBaseController {
 	@PutMapping("/{id}")
 	@Secured("OFFICE")
 	public void updateProduct(@PathVariable Integer id, @RequestBody @Valid ProductDto productDTO) {
-		entityService.getProduct(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if (entityService.getProduct(id).isEmpty())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		Product product = modelMapper.map(productDTO, Product.class);
 		product.setId(id);
 		entityService.saveProduct(product);

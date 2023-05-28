@@ -47,7 +47,8 @@ public class LocationController extends ValidatorBaseController {
 	@PutMapping("/{id}")
 	@Secured("STORAGE")
 	public void updateLocation(@PathVariable Integer id, @RequestBody @Valid LocationDto locationDto) {
-		entityService.getLocation(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+		if (entityService.getLocation(id).isEmpty())
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		Location location = modelMapper.map(locationDto, Location.class);
 		location.setId(id);
 		entityService.saveLocation(location);
