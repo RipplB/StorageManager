@@ -20,3 +20,10 @@ void ProductService::update()
         };
     m_manager->get("/product", QUrlQuery(), callback);
 }
+void ProductService::create(const QVariantMap& data)
+{
+    m_manager->post("/product", data, [this](QNetworkReply* reply, bool success) {
+        if (success)
+            this->update();
+    });
+}

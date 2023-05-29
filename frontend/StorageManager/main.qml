@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
+import Qt.labs.qmlmodels
 
 import StorageManager
 
@@ -67,8 +68,9 @@ ApplicationWindow {
         target: productService
         function onProductsChanged(array) {
             productList.clear();
+            productTable.rows = array;
             for (const product of array) {
-                productList.append({"name": product.name, "id": product.id})
+                productList.append(product)
             }
         }
     }
@@ -92,6 +94,19 @@ ApplicationWindow {
     ListModel {
         id: productList
     }
+    TableModel {
+        id: productTable
+        TableModelColumn {
+            display: "name"
+        }
+        TableModelColumn {
+            display: "description"
+        }
+        TableModelColumn {
+            display: "unit"
+        }
+    }
+
     ListModel {
         id: locationList
     }
@@ -216,9 +231,64 @@ ApplicationWindow {
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
-                        text: "Product"
+                RowLayout {
+                    Label {
+                        text: "Name:"
+                    }
+                    TextInput {
+                        Layout.preferredWidth: 140
+                        id: productNameInput
+                        validator: RegularExpressionValidator {
+                            regularExpression: /^.{1,20}$/
+                        }
+                    }
+                    Label {
+                        text: "Description:"
+                    }
+                    TextInput {
+                        Layout.preferredWidth: 1320
+                        id: productDescriptionInput
+                        validator: RegularExpressionValidator {
+                            regularExpression: /^.{1,255}$/
+                        }
+                    }
+                    Label {
+                        text: "Unit:"
+                    }
+                    TextInput {
+                        Layout.preferredWidth: 70
+                        id: productUnitInput
+                        validator: RegularExpressionValidator {
+                            regularExpression: /^.{1,10}$/
+                        }
+                    }
+                    Button {
+                        text: "Save product"
+                        onClicked: {
+                            productService.create({
+                                                      "name": productNameInput.text,
+                                                      "description": productDescriptionInput.text,
+                                                      "unit": productUnitInput.text
+                                                  })
+                        }
+                    }
+                }
+
+                TableView {
+                    anchors.fill: parent
+                    anchors.centerIn: parent
+                    anchors.margins: 40
+                    animate: false
+                    model: productTable
+                    id: productTableView
+                    delegate: Rectangle {
+                        implicitWidth: 600
+                        implicitHeight: 50
+                        border.width: 1
+                        Text {
+                            text: display
+                            anchors.centerIn: parent
+                        }
                     }
                 }
             }
