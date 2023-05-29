@@ -22,7 +22,11 @@ qt_add_qml_module(appStorageManager
     restservice.h restservice.cpp
     restaccessmanager.h restaccessmanager.cpp
     loginservice.h loginservice.cpp
-
+    productservice.h productservice.cpp
+    locationservice.h locationservice.cpp
+    stockservice.h stockservice.cpp
+    userservice.h userservice.cpp
+    reportingservice.h reportingservice.cpp
 )
 
 set_target_properties(appStorageManager PROPERTIES
@@ -32,6 +36,9 @@ set_target_properties(appStorageManager PROPERTIES
     MACOSX_BUNDLE TRUE
     WIN32_EXECUTABLE TRUE
 )
+
+find_package(Qt6 REQUIRED COMPONENTS Widgets)
+target_link_libraries(appStorageManager PRIVATE Qt6::Widgets)
 
 target_link_libraries(appStorageManager
     PRIVATE Qt6::Quick

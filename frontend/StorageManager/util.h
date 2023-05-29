@@ -7,5 +7,6 @@
 #include <QtCore/qjsonobject.h>
 
 std::optional<QJsonObject> byteArrayToJsonObject(const QByteArray& data);
+std::optional<QJsonArray> byteArrayToJsonArray(const QByteArray& data);
 
 #endif // UTIL_H
