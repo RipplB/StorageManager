@@ -14,8 +14,10 @@ public:
     Q_INVOKABLE void release(const QVariantMap& data);
     Q_INVOKABLE void move(const QVariantMap& data);
     Q_INVOKABLE void update();
+    Q_INVOKABLE void graphData(const QString& query);
 signals:
     void stocksChanged(QJsonArray locations);
+    void graphReady(QJsonArray stocks);
 };
 
 #endif // STOCKSERVICE_H

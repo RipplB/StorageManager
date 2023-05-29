@@ -97,8 +97,32 @@ ApplicationWindow {
         function onStocksChanged(array) {
             stockTable.clear();
             for (const stock of array) {
-                stockTable.appendRow({"product" : stock.product.name, "location": stock.location.name, "amount": stock.amount, "id": stock.id})
+                stockTable.appendRow({"product" : stock.product.name, "location": stock.location.name, "amount": stock.amount, "id": `${stock.product.id}-${stock.location.id}`})
             }
+        }
+        function onGraphReady(array) {
+            stockSeries.clear()
+            let stock = array[0]
+            let total = 0
+            let movements = Array.of(...stock.movements)
+            let amounts = movements.map(mv => mv.amount).reduce((arr, val) => {
+                                               let newAmount = arr.pop() + val
+                                               arr.push(newAmount - val)
+                                               arr.push(newAmount)
+                                               return arr
+                                           }, Array.of(0))
+            console.log(amounts)
+            let biggestAmount = Math.max(...amounts)
+            console.log(`Highest value: ${biggestAmount}`)
+            axisY.max = biggestAmount
+            axisY.tickCount = biggestAmount + 1
+            axisX.max = movements.length;
+            axisX.tickCount = amounts.length
+            stockSeries.append(0, 0)
+            for (let i = 1; i < amounts.length; i++) {
+                stockSeries.append(i, amounts[i])
+            }
+            chartPopup.open()
         }
     }
 
@@ -314,14 +338,33 @@ ApplicationWindow {
         focus: true
         closePolicy: Popup.CloseOnPressOutside
         ChartView {
-            title: "Hal"
+            id: stockChart
+            title: "Amount of stock over time"
             implicitWidth: 800
             implicitHeight: 600
             anchors.fill: parent
             antialiasing: true
-            theme: ChartView.ChartThemeDark
+
+            ValueAxis {
+                id: axisX
+                min: 0
+                max: 4
+                titleText: "# of movement"
+                labelFormat: "%d"
+            }
+
+            ValueAxis{
+                id: axisY
+                min: 0
+                max: 50
+                labelFormat: "%d"
+
+            }
             LineSeries {
-                name: "LineSeries"
+                id: stockSeries
+                name: "Amount"
+                axisX: axisX
+                axisY: axisY
                 XYPoint { x: 0; y: 0 }
                 XYPoint { x: 1.1; y: 2.1 }
                 XYPoint { x: 1.9; y: 3.3 }
@@ -405,6 +448,7 @@ ApplicationWindow {
                 }
             }
             Pane {
+                id: productPane
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 RowLayout {
@@ -489,6 +533,7 @@ ApplicationWindow {
                 }
             }
             Pane {
+                id: locationPane
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 RowLayout {
@@ -562,6 +607,7 @@ ApplicationWindow {
                 }
             }
             Pane {
+                id: receivePane
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 ColumnLayout {
@@ -611,6 +657,7 @@ ApplicationWindow {
                 }
             }
             Pane {
+                id: releasePane
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 ColumnLayout {
@@ -660,6 +707,7 @@ ApplicationWindow {
                 }
             }
             Pane {
+                id: movePane
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 ColumnLayout {
@@ -719,6 +767,7 @@ ApplicationWindow {
                 }
             }
             Pane {
+                id: stockPane
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
@@ -740,7 +789,8 @@ ApplicationWindow {
                                     anchors.centerIn: parent
                                     text: "Show graph"
                                     onClicked: {
-                                        chartPopup.open()
+                                        let ids = model.display.split("-")
+                                        stockService.graphData(`product=${ids[0]}&location=${ids[1]}`)
                                     }
                                 }
                             }
