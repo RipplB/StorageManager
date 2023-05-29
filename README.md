@@ -7,7 +7,7 @@ Csapattagok Neptun kóddal:
 - Rippl Balázs Róbert (FLHM6J)
 - Zambelly Márton (AUTXF6)
 
-Bemutató videó URL: 
+Bemutató videó URL: https://bmeedu-my.sharepoint.com/:v:/g/personal/ripplb_edu_bme_hu/EWWVp5mzRNJBiwnUO3VMKBMBioDHv2Y2B78DQtBTdqOgVA?e=74XrOu
 (Ugye minden olyan dolog szerepel benne a kiírásnak megfelelően, amire pontot szeretnétek kapni?)
 
 **Pontot érő technológiák**
