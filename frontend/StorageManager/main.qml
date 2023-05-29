@@ -78,8 +78,9 @@ ApplicationWindow {
         target: locationService
         function onLocationsChanged(array) {
             locationList.clear();
+            locationTable.rows = array;
             for (const location of array) {
-                locationList.append({"name": location.name, "id": location.id})
+                locationList.append(location)
             }
         }
     }
@@ -112,6 +113,18 @@ ApplicationWindow {
 
     ListModel {
         id: locationList
+    }
+    TableModel {
+        id: locationTable
+        TableModelColumn {
+            display: "name"
+        }
+        TableModelColumn {
+            display: "description"
+        }
+        TableModelColumn {
+            display: "id"
+        }
     }
 
     Popup {
@@ -208,6 +221,52 @@ ApplicationWindow {
                                                    "name": productPopupNameInput.text,
                                                    "description": productPopupDescriptionInput.text,
                                                    "unit": productPopupUnitInput.text
+                                               })
+            }
+        }
+
+    }
+
+    Popup {
+        id: editLocationPopup
+        anchors.centerIn: parent
+        padding: 10
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnPressOutside
+
+        ColumnLayout {
+            GridLayout {
+                columns: 2
+                Label {
+                    text: "Id:"
+                }
+                Label {
+                    id: locationPopupIdInput
+                    text: "IDENTIFIER"
+                }
+                Label {
+                    text: "Name:"
+                }
+                TextArea {
+                    id: locationPopupNameInput
+                    placeholderText: "Enter the new name here"
+                }
+                Label {
+                    text: "Description:"
+                }
+                TextArea {
+                    id: locationPopupDescriptionInput
+                    placeholderText: "Enter the new description here"
+                }
+            }
+            Button {
+                Layout.alignment: Qt.AlignHCenter
+                id: editLocationButton
+                text: "Edit"
+                onClicked: locationService.edit(Number(locationPopupIdInput.text), {
+                                                   "name": locationPopupNameInput.text,
+                                                   "description": locationPopupDescriptionInput.text
                                                })
             }
         }
@@ -372,9 +431,73 @@ ApplicationWindow {
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
-                        text: "Location"
+                RowLayout {
+                    Label {
+                        text: "Name:"
+                    }
+                    TextInput {
+                        Layout.preferredWidth: 140
+                        id: locationNameInput
+                        validator: RegularExpressionValidator {
+                            regularExpression: /^.{1,20}$/
+                        }
+                    }
+                    Label {
+                        text: "Description:"
+                    }
+                    TextInput {
+                        Layout.preferredWidth: 1320
+                        id: locationDescriptionInput
+                        validator: RegularExpressionValidator {
+                            regularExpression: /^.{1,255}$/
+                        }
+                    }
+                    Button {
+                        text: "Save location"
+                        onClicked: {
+                            locationService.create({
+                                                      "name": locationNameInput.text,
+                                                      "description": locationDescriptionInput.text
+                                                  })
+                        }
+                    }
+                }
+
+                TableView {
+                    anchors.fill: parent
+                    anchors.centerIn: parent
+                    anchors.margins: 40
+                    animate: false
+                    model: locationTable
+                    id: locationTableView
+                    delegate: DelegateChooser {
+                        DelegateChoice {
+                            column: 2
+                            delegate: Rectangle {
+                                implicitWidth: 150
+                                implicitHeight: 50
+                                border.width: 1
+                                Button {
+                                    anchors.centerIn: parent
+                                    text: "Edit"
+                                    onClicked: {
+                                        locationPopupIdInput.text = model.display
+                                        editLocationPopup.open()
+                                    }
+                                }
+                            }
+                        }
+                        DelegateChoice {
+                            delegate: Rectangle {
+                                implicitWidth: 550
+                                implicitHeight: 50
+                                border.width: 1
+                                Text {
+                                    text: display
+                                    anchors.centerIn: parent
+                                }
+                            }
+                        }
                     }
                 }
             }
