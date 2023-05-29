@@ -21,3 +21,17 @@ void LocationService::update()
         };
     m_manager->get("/location", QUrlQuery(), callback);
 }
+void LocationService::create(const QVariantMap& data)
+{
+    m_manager->post("/location", data, [this](QNetworkReply* reply, bool success) {
+        if (success)
+            this->update();
+    });
+}
+void LocationService::edit(const int& id, const QVariantMap& data)
+{
+    m_manager->put(("/location/" + std::to_string(id)).c_str(), data, [this](QNetworkReply* reply, bool success) {
+        if (success)
+            this->update();
+    });
+}

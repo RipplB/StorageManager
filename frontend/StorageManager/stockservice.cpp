@@ -6,7 +6,15 @@ StockService::StockService(QObject *parent)
 
 }
 
+void StockService::update()
+{
+
+}
+
 void StockService::receive(const QVariantMap& data)
 {
-    m_manager->post("/stocks/receive", data, nullptr);
+    m_manager->post("/stocks/receive", data, [this](QNetworkReply* reply, bool success) {
+        if (success)
+            this->update();
+    });
 }

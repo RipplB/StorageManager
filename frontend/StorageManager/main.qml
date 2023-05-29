@@ -105,6 +105,9 @@ ApplicationWindow {
         TableModelColumn {
             display: "unit"
         }
+        TableModelColumn {
+            display: "id"
+        }
     }
 
     ListModel {
@@ -152,6 +155,60 @@ ApplicationWindow {
                 id: loginButton
                 text: "Login"
                 onClicked: loginService.login(serverUrlInput.text, {"username": usernameInput.text, "password": passwordInput.text})
+            }
+        }
+
+    }
+
+    Popup {
+        id: editProductPopup
+        anchors.centerIn: parent
+        padding: 10
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnPressOutside
+
+        ColumnLayout {
+            GridLayout {
+                columns: 2
+                Label {
+                    text: "Id:"
+                }
+                Label {
+                    id: productPopupIdInput
+                    text: "IDENTIFIER"
+                }
+                Label {
+                    text: "Name:"
+                }
+                TextArea {
+                    id: productPopupNameInput
+                    placeholderText: "Enter the new name here"
+                }
+                Label {
+                    text: "Description:"
+                }
+                TextArea {
+                    id: productPopupDescriptionInput
+                    placeholderText: "Enter the new description here"
+                }
+                Label {
+                    text: "Unit:"
+                }
+                TextArea {
+                    id: productPopupUnitInput
+                    placeholderText: "Enter the new unit here"
+                }
+            }
+            Button {
+                Layout.alignment: Qt.AlignHCenter
+                id: editProductButton
+                text: "Edit"
+                onClicked: productService.edit(Number(productPopupIdInput.text), {
+                                                   "name": productPopupNameInput.text,
+                                                   "description": productPopupDescriptionInput.text,
+                                                   "unit": productPopupUnitInput.text
+                                               })
             }
         }
 
@@ -281,13 +338,33 @@ ApplicationWindow {
                     animate: false
                     model: productTable
                     id: productTableView
-                    delegate: Rectangle {
-                        implicitWidth: 600
-                        implicitHeight: 50
-                        border.width: 1
-                        Text {
-                            text: display
-                            anchors.centerIn: parent
+                    delegate: DelegateChooser {
+                        DelegateChoice {
+                            column: 3
+                            delegate: Rectangle {
+                                implicitWidth: 150
+                                implicitHeight: 50
+                                border.width: 1
+                                Button {
+                                    anchors.centerIn: parent
+                                    text: "Edit"
+                                    onClicked: {
+                                        productPopupIdInput.text = model.display
+                                        editProductPopup.open()
+                                    }
+                                }
+                            }
+                        }
+                        DelegateChoice {
+                            delegate: Rectangle {
+                                implicitWidth: 550
+                                implicitHeight: 50
+                                border.width: 1
+                                Text {
+                                    text: display
+                                    anchors.centerIn: parent
+                                }
+                            }
                         }
                     }
                 }

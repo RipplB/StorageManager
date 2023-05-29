@@ -13,6 +13,7 @@ public:
     explicit ProductService(QObject *parent = nullptr);
     Q_INVOKABLE void update();
     Q_INVOKABLE void create(const QVariantMap& data);
+    Q_INVOKABLE void edit(const int& id, const QVariantMap& data);
 signals:
     void productsChanged(QJsonArray products);
 };

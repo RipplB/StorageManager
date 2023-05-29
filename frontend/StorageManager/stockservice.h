@@ -11,6 +11,7 @@ class StockService : public AbstractResource
 public:
     explicit StockService(QObject *parent = nullptr);
     Q_INVOKABLE void receive(const QVariantMap& data);
+    Q_INVOKABLE void update();
 };
 
 #endif // STOCKSERVICE_H
