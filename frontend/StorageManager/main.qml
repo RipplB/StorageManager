@@ -32,11 +32,22 @@ ApplicationWindow {
         LoginService {
             id: loginService
         }
+        ProductService {
+            id: productService
+        }
+        LocationService {
+            id: locationService
+        }
+        StockService {
+            id: stockService
+        }
     }
     Connections {
         target: loginService
         function onLoginSuccess() {
             loginPopup.close()
+            productService.update()
+            locationService.update()
             refreshTimer.start()
         }
         function onRolesChanged(list) {
@@ -48,12 +59,41 @@ ApplicationWindow {
             toolBtnReport.visible = list.includes("OFFICE")
             toolBtnUsers.visible = list.includes("MANAGER")
         }
+        function onRefreshSuccess() {
+            refreshTimer.start()
+        }
     }
+    Connections {
+        target: productService
+        function onProductsChanged(array) {
+            productList.clear();
+            for (const product of array) {
+                productList.append({"name": product.name, "id": product.id})
+            }
+        }
+    }
+    Connections {
+        target: locationService
+        function onLocationsChanged(array) {
+            locationList.clear();
+            for (const location of array) {
+                locationList.append({"name": location.name, "id": location.id})
+            }
+        }
+    }
+
     Timer {
         id: refreshTimer
         interval: 10000
         repeat: true
         onTriggered: loginService.refresh()
+    }
+
+    ListModel {
+        id: productList
+    }
+    ListModel {
+        id: locationList
     }
 
     Popup {
@@ -194,9 +234,49 @@ ApplicationWindow {
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
+                ColumnLayout {
+                    anchors.centerIn: parent
+                    GridLayout {
+                        columns: 2
+
+                        Label {
+                            text: "Product"
+                        }
+                        ComboBox {
+                            id: receiveProductSelection
+                            model: productList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Location"
+                        }
+                        ComboBox {
+                            id: receiveLocationSelection
+                            model: locationList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Amount"
+                        }
+                        TextInput {
+                            Layout.fillWidth: true
+                            id: receiveAmountInput
+                            validator: IntValidator {
+                                bottom: 1
+                            }
+                        }
+                    }
+                    Button {
                         text: "Receive"
+                        onClicked: {
+                            stockService.receive({
+                                                     "product": receiveProductSelection.currentValue,
+                                                     "amount": Number(receiveAmountInput.text),
+                                                     "targetLocation": receiveLocationSelection.currentValue
+                                                 })
+                        }
                     }
                 }
             }

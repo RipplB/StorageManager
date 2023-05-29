@@ -15,8 +15,10 @@ void LoginService::login(const QString& url, const QVariantMap& data)
     m_manager->setUrl(url);
     RestAccessManager::ResponseCallback callback =
         [this,  data](QNetworkReply* reply, bool success) {
-            if (success)
+            if (success) {
                 loginRequestFinished(reply);
+                emit loginSuccess();
+            }
         };
     m_manager->post("/auth/login", data, callback);
 }
@@ -31,7 +33,6 @@ void LoginService::loginRequestFinished(QNetworkReply* reply)
             currentRoles.append(iter->toString());
         emit rolesChanged(currentRoles);
         m_manager->setAuthorizationToken(json->value("value").toVariant().toByteArray());
-        emit loginSuccess();
     }
 }
 
@@ -43,8 +44,10 @@ void LoginService::refresh()
 {
     RestAccessManager::ResponseCallback callback =
         [this](QNetworkReply* reply, bool success) {
-            if (success)
+            if (success) {
                 loginRequestFinished(reply);
+                emit refreshSuccess();
+            }
         };
     m_manager->post("/auth/refresh", QVariantMap(), callback);
 }

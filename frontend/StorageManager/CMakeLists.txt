@@ -22,7 +22,9 @@ qt_add_qml_module(appStorageManager
     restservice.h restservice.cpp
     restaccessmanager.h restaccessmanager.cpp
     loginservice.h loginservice.cpp
-
+    productservice.h productservice.cpp
+    locationservice.h locationservice.cpp
+    stockservice.h stockservice.cpp
 )
 
 set_target_properties(appStorageManager PROPERTIES

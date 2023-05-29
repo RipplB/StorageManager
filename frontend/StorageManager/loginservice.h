@@ -19,6 +19,7 @@ private:
     QList<QString> currentRoles;
 signals:
     void loginSuccess();
+    void refreshSuccess();
     void rolesChanged(QList<QString> newRoles);
 };
 
