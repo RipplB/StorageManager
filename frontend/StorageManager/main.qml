@@ -42,6 +42,9 @@ ApplicationWindow {
         StockService {
             id: stockService
         }
+        UserService {
+            id: userService
+        }
     }
     Connections {
         target: loginService
@@ -737,9 +740,84 @@ ApplicationWindow {
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
-                        text: "Users"
+                ColumnLayout {
+                    anchors.centerIn: parent
+                    GridLayout {
+                        columns: 2
+
+                        Label {
+                            text: "Login name"
+                        }
+                        TextInput {
+                            Layout.preferredWidth: 200
+                            id: newUserNameInput
+                            validator: RegularExpressionValidator {
+                                regularExpression: /^.{1,20}$/
+                            }
+                        }
+                        Label {
+                            text: "Password"
+                        }
+                        TextInput {
+                            Layout.preferredWidth: 200
+                            id: newUserPasswordInput
+                            validator: RegularExpressionValidator {
+                                regularExpression: /^.{6,64}$/
+                            }
+                        }
+                        Label {
+                            text: "Full name"
+                        }
+                        TextInput {
+                            Layout.preferredWidth: 200
+                            id: newUserFullNameInput
+                            validator: RegularExpressionValidator {
+                                regularExpression: /^.{1,255}$/
+                            }
+                        }
+                        Label {
+                            text: "Email address"
+                        }
+                        TextInput {
+                            Layout.preferredWidth: 200
+                            id: newUserEmailInput
+                        }
+                    }
+                    RowLayout {
+                        CheckBox {
+                            id: managerRole
+                            text: "MANAGER"
+                        }
+                        CheckBox {
+                            id: storageRole
+                            text: "STORAGE"
+                        }
+                        CheckBox {
+                            id: officeRole
+                            text: "OFFICE"
+                        }
+                    }
+
+                    Button {
+                        text: "Create user"
+                        onClicked: {
+                            if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(newUserEmailInput.text))
+                                return
+                            let roles = Array()
+                            if (managerRole.checked)
+                                roles.push(managerRole.text)
+                            if (storageRole.checked)
+                                roles.push(storageRole.text)
+                            if (officeRole.checked)
+                                roles.push(officeRole.text)
+                            userService.create({
+                                                   "loginName": newUserNameInput.text,
+                                                   "password": newUserPasswordInput.text,
+                                                   "fullName": newUserFullNameInput.text,
+                                                   "roleNames": roles,
+                                                   "email": newUserEmailInput.text
+                                               })
+                        }
                     }
                 }
             }

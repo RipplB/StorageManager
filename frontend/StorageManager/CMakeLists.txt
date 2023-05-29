@@ -25,6 +25,7 @@ qt_add_qml_module(appStorageManager
     productservice.h productservice.cpp
     locationservice.h locationservice.cpp
     stockservice.h stockservice.cpp
+    userservice.h userservice.cpp
 )
 
 set_target_properties(appStorageManager PROPERTIES
