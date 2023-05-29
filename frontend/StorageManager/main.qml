@@ -3,6 +3,7 @@ import QtQuick.Window
 import QtQuick.Controls
 import QtQuick.Layouts
 import Qt.labs.qmlmodels
+import QtCharts
 
 import StorageManager
 
@@ -44,6 +45,9 @@ ApplicationWindow {
         }
         UserService {
             id: userService
+        }
+        ReportingService {
+            id: reportingService
         }
     }
     Connections {
@@ -300,6 +304,33 @@ ApplicationWindow {
             }
         }
 
+    }
+
+    Popup {
+        id: chartPopup
+        anchors.centerIn: parent
+        padding: 10
+        modal: true
+        focus: true
+        closePolicy: Popup.CloseOnPressOutside
+        ChartView {
+            title: "Hal"
+            implicitWidth: 800
+            implicitHeight: 600
+            anchors.fill: parent
+            antialiasing: true
+            theme: ChartView.ChartThemeDark
+            LineSeries {
+                name: "LineSeries"
+                XYPoint { x: 0; y: 0 }
+                XYPoint { x: 1.1; y: 2.1 }
+                XYPoint { x: 1.9; y: 3.3 }
+                XYPoint { x: 2.1; y: 2.1 }
+                XYPoint { x: 2.9; y: 4.9 }
+                XYPoint { x: 3.4; y: 3.0 }
+                XYPoint { x: 4.1; y: 3.3 }
+            }
+        }
     }
 
     ColumnLayout {
@@ -709,7 +740,7 @@ ApplicationWindow {
                                     anchors.centerIn: parent
                                     text: "Show graph"
                                     onClicked: {
-
+                                        chartPopup.open()
                                     }
                                 }
                             }
@@ -731,9 +762,56 @@ ApplicationWindow {
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
+                ColumnLayout {
+                    anchors.centerIn: parent
+                    GridLayout {
+                        columns: 2
+
+                        Label {
+                            text: "Type"
+                        }
+                        ComboBox {
+                            id: reportTypeSelection
+                            model: ["Daily Report", "Report By Name", "Report By Location"]
+                        }
+                        Label {
+                            text: "Product parameter"
+                        }
+                        ComboBox {
+                            id: reportProductSelection
+                            model: productList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Location parameter"
+                        }
+                        ComboBox {
+                            id:reportLocationSelection
+                            model: locationList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Recipients"
+                        }
+                        TextArea {
+                            id: reportRecipientInput
+                            placeholderText: "Enter the email addresses\nline by line"
+                        }
+                    }
+                    Button {
                         text: "Report"
+                        onClicked: {
+                            let rec = Array();
+                            reportRecipientInput.text.split("\n").forEach(line => rec.push(line.trim()));
+                            if (reportTypeSelection.currentText === "Daily Report")
+                                reportingService.send({"type": "Daily Report", "receivers": rec})
+                            if (reportTypeSelection.currentText === "Report By Name")
+                                reportingService.send({"type": "Report By Name", "param": reportProductSelection.currentText, "receivers": rec})
+                            if (reportTypeSelection.currentText === "Report By Location")
+                                reportingService.send({"type": "Report By Location", "param": reportLocationSelection.currentText, "receivers": rec})
+                        }
                     }
                 }
             }
