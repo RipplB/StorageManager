@@ -49,6 +49,7 @@ ApplicationWindow {
             loginPopup.close()
             productService.update()
             locationService.update()
+            stockService.update()
             refreshTimer.start()
         }
         function onRolesChanged(list) {
@@ -81,6 +82,15 @@ ApplicationWindow {
             locationTable.rows = array;
             for (const location of array) {
                 locationList.append(location)
+            }
+        }
+    }
+    Connections {
+        target: stockService
+        function onStocksChanged(array) {
+            stockTable.clear();
+            for (const stock of array) {
+                stockTable.appendRow({"product" : stock.product.name, "location": stock.location.name, "amount": stock.amount, "id": stock.id})
             }
         }
     }
@@ -121,6 +131,22 @@ ApplicationWindow {
         }
         TableModelColumn {
             display: "description"
+        }
+        TableModelColumn {
+            display: "id"
+        }
+    }
+
+    TableModel {
+        id: stockTable
+        TableModelColumn {
+            display: "product"
+        }
+        TableModelColumn {
+            display: "location"
+        }
+        TableModelColumn {
+            display: "amount"
         }
         TableModelColumn {
             display: "id"
@@ -553,27 +579,149 @@ ApplicationWindow {
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
+                ColumnLayout {
+                    anchors.centerIn: parent
+                    GridLayout {
+                        columns: 2
+
+                        Label {
+                            text: "Product"
+                        }
+                        ComboBox {
+                            id: releaseProductSelection
+                            model: productList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Location"
+                        }
+                        ComboBox {
+                            id: releaseLocationSelection
+                            model: locationList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Amount"
+                        }
+                        TextInput {
+                            Layout.fillWidth: true
+                            id: releaseAmountInput
+                            validator: IntValidator {
+                                bottom: 1
+                            }
+                        }
+                    }
+                    Button {
                         text: "Release"
+                        onClicked: {
+                            stockService.release({
+                                                     "product": releaseProductSelection.currentValue,
+                                                     "amount": Number(releaseAmountInput.text),
+                                                     "sourceLocation": releaseLocationSelection.currentValue
+                                                 })
+                        }
                     }
                 }
             }
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
-                        text: "Internal"
+                ColumnLayout {
+                    anchors.centerIn: parent
+                    GridLayout {
+                        columns: 2
+
+                        Label {
+                            text: "Product"
+                        }
+                        ComboBox {
+                            id: moveProductSelection
+                            model: productList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Source location"
+                        }
+                        ComboBox {
+                            id: moveSourceLocationSelection
+                            model: locationList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Target location"
+                        }
+                        ComboBox {
+                            id: moveTargetLocationSelection
+                            model: locationList
+                            textRole: "name"
+                            valueRole: "id"
+                        }
+                        Label {
+                            text: "Amount"
+                        }
+                        TextInput {
+                            Layout.fillWidth: true
+                            id: moveAmountInput
+                            validator: IntValidator {
+                                bottom: 1
+                            }
+                        }
+                    }
+                    Button {
+                        text: "Move"
+                        onClicked: {
+                            stockService.move({
+                                                     "product": moveProductSelection.currentValue,
+                                                     "amount": Number(moveAmountInput.text),
+                                                     "sourceLocation": moveSourceLocationSelection.currentValue,
+                                                     "targetLocation": moveTargetLocationSelection.currentValue
+                                                 })
+                        }
                     }
                 }
             }
             Pane {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Item {
-                    Text {
-                        text: "Stock"
+
+                TableView {
+                    anchors.fill: parent
+                    anchors.centerIn: parent
+                    anchors.margins: 40
+                    animate: false
+                    model: stockTable
+                    id: stockTableView
+                    delegate: DelegateChooser {
+                        DelegateChoice {
+                            column: 3
+                            delegate: Rectangle {
+                                implicitWidth: 150
+                                implicitHeight: 50
+                                border.width: 1
+                                Button {
+                                    anchors.centerIn: parent
+                                    text: "Show graph"
+                                    onClicked: {
+
+                                    }
+                                }
+                            }
+                        }
+                        DelegateChoice {
+                            delegate: Rectangle {
+                                implicitWidth: 550
+                                implicitHeight: 50
+                                border.width: 1
+                                Text {
+                                    text: display
+                                    anchors.centerIn: parent
+                                }
+                            }
+                        }
                     }
                 }
             }
