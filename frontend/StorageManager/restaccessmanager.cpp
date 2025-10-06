@@ -9,17 +9,21 @@ static constexpr auto contentTypeJson = "application/json"_L1;
 // A custom authorization scheme implemented by the Qt example server
 static const auto authorizationHeader = "Authorization"_ba;
 static const auto authorizationType = "Bearer"_ba;
+static const auto correlationIdHeader = "X-Correlation-ID"_ba;
 
 static bool httpResponseSuccess(QNetworkReply* reply)
 {
     const int httpStatusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     const bool isReplyError = (reply->error() != QNetworkReply::NoError);
+    
+    // Extract correlation ID from request for logging
+    QString correlationId = QString::fromUtf8(reply->request().rawHeader(correlationIdHeader));
 
-    qDebug() << "Request to path" << reply->request().url().path() << "finished";
+    qDebug() << "Request to path" << reply->request().url().path() << "finished [CorrelationID:" << correlationId << "]";
     if (isReplyError)
-        qDebug() << "Error" << reply->error();
+        qDebug() << "Error" << reply->error() << "[CorrelationID:" << correlationId << "]";
     else
-        qDebug() << "HTTP:" <<  httpStatusCode;
+        qDebug() << "HTTP:" <<  httpStatusCode << "[CorrelationID:" << correlationId << "]";
 
     return (!isReplyError && (httpStatusCode >= 200 && httpStatusCode < 300));
 }
@@ -49,6 +53,11 @@ QByteArray authHeader(QByteArray token)
     return QByteArray(header.c_str());
 }
 
+QByteArray generateCorrelationId()
+{
+    return QUuid::createUuid().toString(QUuid::WithoutBraces).toUtf8();
+}
+
 void RestAccessManager::setAuthorizationToken(const QByteArray& token)
 {
     m_authorizationToken = token;
@@ -59,8 +68,15 @@ void RestAccessManager::post(const QString& api, const QVariantMap& value,
 {
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);
+    
+    QByteArray correlationId = generateCorrelationId();
+    
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
+    request.setRawHeader(correlationIdHeader, correlationId);
+    
+    qDebug() << "POST request to" << api << "[CorrelationID:" << correlationId << "]";
+    
     QNetworkReply* reply = QNetworkAccessManager::post(request,
                                QJsonDocument::fromVariant(value).toJson(QJsonDocument::Compact));
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
@@ -74,7 +90,14 @@ void RestAccessManager::get(const QString& api, const QUrlQuery& parameters,
     m_url.setPath(api);
     m_url.setQuery(parameters);
     auto request = QNetworkRequest(m_url);
+    
+    QByteArray correlationId = generateCorrelationId();
+    
     request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
+    request.setRawHeader(correlationIdHeader, correlationId);
+    
+    qDebug() << "GET request to" << api << "[CorrelationID:" << correlationId << "]";
+    
     QNetworkReply* reply = QNetworkAccessManager::get(request);
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
         callback(reply, httpResponseSuccess(reply));
@@ -86,8 +109,15 @@ void RestAccessManager::put(const QString& api, const QVariantMap& value,
 {
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);
+    
+    QByteArray correlationId = generateCorrelationId();
+    
     request.setHeader(QNetworkRequest::KnownHeaders::ContentTypeHeader, contentTypeJson);
     request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
+    request.setRawHeader(correlationIdHeader, correlationId);
+    
+    qDebug() << "PUT request to" << api << "[CorrelationID:" << correlationId << "]";
+    
     QNetworkReply* reply = QNetworkAccessManager::put(request,
                              QJsonDocument::fromVariant(value).toJson(QJsonDocument::Compact));
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
@@ -99,7 +129,14 @@ void RestAccessManager::deleteResource(const QString& api, ResponseCallback call
 {
     m_url.setPath(api);
     auto request = QNetworkRequest(m_url);
+    
+    QByteArray correlationId = generateCorrelationId();
+    
     request.setRawHeader(authorizationHeader, authHeader(m_authorizationToken));
+    request.setRawHeader(correlationIdHeader, correlationId);
+    
+    qDebug() << "DELETE request to" << api << "[CorrelationID:" << correlationId << "]";
+    
     QNetworkReply* reply = QNetworkAccessManager::deleteResource(request);
     QObject::connect(reply, &QNetworkReply::finished, reply, [reply, callback](){
        callback(reply, httpResponseSuccess(reply));

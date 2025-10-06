@@ -36,7 +36,7 @@ public class StockController extends ValidatorBaseController {
 	@ExceptionHandler({MovementException.class})
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public String notFound(MovementException exception) {
-		log.error(exception.getMessage());
+		log.error("{} [CorrelationID: {}]", exception.getMessage(), getCurrentCorrelationId());
 		return exception.getMessage();
 	}
 
@@ -44,12 +44,12 @@ public class StockController extends ValidatorBaseController {
 	public List<Stock> getAllStocks(@RequestParam(required = false, name = "product") Integer productId, @RequestParam(required = false, name = "location") Integer locationId) {
 		Product product = null;
 		if (productId != null) {
-			log.debug("Product id not null, looking for it");
+			log.debug("Product id not null, looking for it [CorrelationID: {}]", getCurrentCorrelationId());
 			product = entityService.getProduct(productId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Product with id %d not found", productId)));
 		}
 		Location location = null;
 		if (locationId != null) {
-			log.debug("Location id not null, looking for it");
+			log.debug("Location id not null, looking for it [CorrelationID: {}]", getCurrentCorrelationId());
 			location = entityService.getLocation(locationId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, String.format("Location with id %d not found", locationId)));
 		}
 
@@ -65,7 +65,7 @@ public class StockController extends ValidatorBaseController {
 		} catch (MovementException mve) {
 			throw mve;
 		} catch (Exception e) {
-			log.error("Failed saving stock receive", e);
+			log.error("Failed saving stock receive [CorrelationID: {}]", getCurrentCorrelationId(), e);
 			return ResponseEntity.internalServerError().build();
 		}
 	}
@@ -79,7 +79,7 @@ public class StockController extends ValidatorBaseController {
 		} catch (MovementException mve) {
 			throw mve;
 		} catch (Exception e) {
-			log.error("Failed saving stock release", e);
+			log.error("Failed saving stock release [CorrelationID: {}]", getCurrentCorrelationId(), e);
 			return ResponseEntity.internalServerError().build();
 		}
 	}
@@ -93,9 +93,13 @@ public class StockController extends ValidatorBaseController {
 		} catch (MovementException mve) {
 			throw mve;
 		} catch (Exception e) {
-			log.error("Failed saving internal stock movement", e);
+			log.error("Failed saving internal stock movement [CorrelationID: {}]", getCurrentCorrelationId(), e);
 			return ResponseEntity.internalServerError().build();
 		}
+	}
+	
+	private String getCurrentCorrelationId() {
+		return org.slf4j.MDC.get("correlationId");
 	}
 
 }

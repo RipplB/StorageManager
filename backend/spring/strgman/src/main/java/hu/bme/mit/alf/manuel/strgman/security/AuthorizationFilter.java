@@ -27,25 +27,25 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String authHeader = request.getHeader("Authorization");
 		if (authHeader == null) {
-			log.error("No authorization set while trying to access secured endpoint {}", request.getContextPath());
+			log.error("No authorization set while trying to access secured endpoint {} [CorrelationID: {}]", request.getContextPath(), getCurrentCorrelationId());
 			filterChain.doFilter(request, response);
 			return;
 		}
 		String[] authHeaderSplit = authHeader.split(" ");
 		if (authHeaderSplit.length != 2) {
-			log.error("Invalid authorization header '{}' while trying to access secured endpoint {}", authHeader, request.getContextPath());
+			log.error("Invalid authorization header '{}' while trying to access secured endpoint {} [CorrelationID: {}]", authHeader, request.getContextPath(), getCurrentCorrelationId());
 			filterChain.doFilter(request, response);
 			return;
 		}
 		if (!authHeaderSplit[0].equals("Bearer")) {
-			log.error("Invalid authorization type {} while trying to access secured endpoint {}", authHeaderSplit[0], request.getContextPath());
+			log.error("Invalid authorization type {} while trying to access secured endpoint {} [CorrelationID: {}]", authHeaderSplit[0], request.getContextPath(), getCurrentCorrelationId());
 			filterChain.doFilter(request, response);
 			return;
 		}
 
 		String token = authHeaderSplit[1];
 		if (!jwtHandling.validateJwtToken(token)) {
-			log.warn("Invalid jwt token {} while trying to access secured endpoint {}", token, request.getContextPath());
+			log.warn("Invalid jwt token {} while trying to access secured endpoint {} [CorrelationID: {}]", token, request.getContextPath(), getCurrentCorrelationId());
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -57,5 +57,9 @@ public class AuthorizationFilter extends OncePerRequestFilter {
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		filterChain.doFilter(request, response);
+	}
+	
+	private String getCurrentCorrelationId() {
+		return org.slf4j.MDC.get("correlationId");
 	}
 }
