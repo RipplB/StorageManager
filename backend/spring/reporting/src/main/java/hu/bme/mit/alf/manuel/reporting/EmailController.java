@@ -16,7 +16,8 @@ public class EmailController {
 
 
     void LogMessage(String s) {
-        log.info("Incoming message: {}", s);
+        String correlationId = getCurrentCorrelationId();
+        log.info("Incoming message: {} [CorrelationID: {}]", s, correlationId);
 
         try (BufferedReader reader = new BufferedReader(new StringReader(s))) {
             String line;
@@ -26,36 +27,40 @@ public class EmailController {
             String firstline = reader.readLine();
 
             if (s.isEmpty()) {
-                log.info("Message is empty.");
+                log.info("Message is empty. [CorrelationID: {}]", correlationId);
                 return;
             }
 
             if (dr.equals(firstline)) {
-                log.info("It is a Daily Report request");
+                log.info("It is a Daily Report request [CorrelationID: {}]", correlationId);
                 while ((line = reader.readLine()) != null) {
-                    log.info("Sent to {}", line);
+                    log.info("Sent to {} [CorrelationID: {}]", line, correlationId);
                     emailService.sendStockReport(line, "Report");
                 }
             }
             else if (reportByName.equals(firstline)) {
-                log.info("It is a Report By Name request");
+                log.info("It is a Report By Name request [CorrelationID: {}]", correlationId);
                 String secondLine = reader.readLine();
                 while ((line = reader.readLine()) != null) {
-                    log.info("Sent to {}", line);
+                    log.info("Sent to {} [CorrelationID: {}]", line, correlationId);
                     emailService.sendStockReportByName(line, "Report By Name", secondLine);
                 }
             }
             else if (reportByLoc.equals(firstline)) {
-                log.info("It is a Report By Location request");
+                log.info("It is a Report By Location request [CorrelationID: {}]", correlationId);
                 String secondLine = reader.readLine();
                 while ((line = reader.readLine()) != null) {
-                    log.info("Sent to {}", line);
+                    log.info("Sent to {} [CorrelationID: {}]", line, correlationId);
                     emailService.sendStockReportByLocation(line, "Report By Location", secondLine);
                 }
             }
         } catch (IOException e) {
-            log.error("Error while processing the message: {}", e.getMessage());
+            log.error("Error while processing the message: {} [CorrelationID: {}]", e.getMessage(), correlationId);
         }
+    }
+    
+    private String getCurrentCorrelationId() {
+        return org.slf4j.MDC.get("correlationId");
     }
 
     @Autowired

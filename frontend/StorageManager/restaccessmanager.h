@@ -7,6 +7,7 @@
 #include <functional>
 #include <QtCore/qurlquery.h>
 #include <QtCore/qjsondocument.h>
+#include <QtCore/quuid.h>
 #include <QtNetwork/qnetworkreply.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtQml/qqml.h>
